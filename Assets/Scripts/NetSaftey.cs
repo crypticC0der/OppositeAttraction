@@ -4,42 +4,64 @@ using UnityEngine;
 
 public class NetSaftey : MonoBehaviour
 {
+	bool won=false;
+	float timer=0.1f;
+	bool ded=false;
 	void Die(){
 		//TODO
-		GameObject.Destroy(gameObject);
+		timer=0.1f;
+		Animator anim =gameObject.GetComponent<Animator>();
+		ded=true;
+		anim.SetBool("dying",true);
 	}
 
 	void Win(){
-		//TODO
+		won=true;
+		timer=0.7f;
+		Animator anim =gameObject.GetComponent<Animator>();
+		anim.SetBool("winning",true);
 	}
 
-	Vector2 GetDots(float angle,Vector3 distance){
-		Vector2 angleVec = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
-		float transPositive = angleVec.y*distance.x +angleVec.x*distance.y;
-		if (transPositive<0){
-			transPositive*=-1;
+	void LateUpdate(){
+		if(won||ded){
+			timer-=Time.deltaTime;
+			if(timer<0 && won){
+				//next level
+				won=false;
+				GameObject.Destroy(gameObject);	
+			}else if(timer<0 &&ded){
+				ded=false;
+				GameObject net = Instantiate(Resources.Load("BrokenBoy") as GameObject) as GameObject;
+				net.transform.position=transform.position;
+				GameObject.Destroy(gameObject);
+			}
 		}
-		return new Vector2(-angleVec.x*distance.x + angleVec.y*distance.y,transPositive);
 	}
 
 	void OnCollisionEnter2D(Collision2D col){
-		Vector2 dots;
+		Vector2 dots = Globals.GetDots(Mathf.PI*col.transform.eulerAngles.z/180,transform.position-col.transform.position);
 		switch(col.gameObject.tag){
 			case "DangerAll":
 				Die();
 				break;
 			case "DangerVert":
-				dots = GetDots(Mathf.PI*col.transform.eulerAngles.z/180,transform.position-col.transform.position);
 				if ((dots.x>0 && dots.x>dots.y) || (dots.x<0 && -dots.x>dots.y)){
 					Die();
 				}
 				break;
 			case "DangerUP":
-				dots = GetDots(Mathf.PI*col.transform.eulerAngles.z/180,transform.position-col.transform.position);
 				if (dots.x>dots.y){
 					Die();
 				}
 				break;
+			case "Player":
+					Win();
+					GameObject.Destroy(col.gameObject);
+					Vector3 pos = transform.position;
+					pos.y=3.4f;
+					Globals.accelerations[gameObject]=new Vector3(0,0,0);
+					transform.position=pos;
+					break;
 		}
 	}
 }

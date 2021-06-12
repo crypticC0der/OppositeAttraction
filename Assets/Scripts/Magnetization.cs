@@ -90,4 +90,11 @@ public class Magnetization : MonoBehaviour
 			Globals.accelerations[results[i].collider.gameObject]=acc;
 		}
 	}
+	
+	void OnDestroy(){
+		int i=0;
+		for(i=0;i<transRights.Count;i++){
+			GameObject.Destroy(transRights[i].gameObject);
+		}
+	}
 }

@@ -21,14 +21,16 @@ public class SideMove : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
 		if (Input.GetKeyDown("space")){
 			min=-Mathf.Infinity;
 			max=Mathf.Infinity;
 		}
 		
-
+		if(velocity.x>0){velocity.x-=8*Time.deltaTime;}
+		if(velocity.x<0){velocity.x+=8*Time.deltaTime;}
+		if(velocity.x<0.1 &&velocity.x>-0.1){velocity.x=0;}
 		Vector3 acc = new Vector3(0,Globals.res,0); 
 		if (velocity.y>0){acc.y*=-1;}
 		if (velocity.y<1&&velocity.y>-1 && (Globals.accelerations[gameObject].y!=0 || (velocity.y<0.1 && velocity.y>-0.1))){acc*=0;}
@@ -40,26 +42,40 @@ public class SideMove : MonoBehaviour
 		
 		if(velocity.y>max_spd){velocity.y=max_spd;}
 		else if(velocity.y<-max_spd){velocity.y =-max_spd;}
-		bool frame = (velocity.y<-.01f || velocity.y>.01f) && (!(velocity.y>0 && transform.position.y>max)) && !(velocity.y<0 && transform.position.y<min);
+		bool frame = (velocity.y<-.01f || velocity.y>.01f) && (transform.position.x > Globals.end  || !(velocity.y>0 && transform.position.y>max)) && !(velocity.y<0 && transform.position.y<min);
 		
 		//if you start flying through walls use this instead, and have maxes as the inital values not the infinities when space is pressed
 		//bool frame = (velocity.y<-.01f || velocity.y>.01f) && (transform.position.x>8 || !(velocity.y>0 && transform.position.y>max)) && !(velocity.y<0 && transform.position.y<min);
-
-		if (frame){
+		if (frame || velocity.x!=0){
 			transform.position+=velocity*Time.deltaTime;
 		}
 		Globals.accelerations[gameObject]=new Vector3(0,0,0);
 		lframe =frame;
 		notStuck=true;
     }
-
 	void OnCollisionStay2D(Collision2D collision){
 		Vector2 vecpos = new Vector2(transform.position.x,transform.position.y);
 		Vector2 nearPoint = collision.collider.ClosestPoint(vecpos);
 		nearPoint-=vecpos;
 		if(nearPoint.x<0){nearPoint.x*=-1;}
 		if(nearPoint.y<0){nearPoint.y*=-1;}
-		if (nearPoint.y>nearPoint.x){
+		if (collision.gameObject.tag=="Spring"){
+			Animator ani = collision.gameObject.GetComponent<Animator>();
+			float angle=collision.transform.eulerAngles.z*Mathf.PI/180;
+			Vector3 ang = new Vector3(Mathf.Sin(angle),-Mathf.Cos(angle),0);
+			Vector3 rVel = velocity;
+			rVel.x*=4;
+			if(copycat){
+				rVel+=Globals.playervel;
+			}
+			float dot = 1*(ang.x*rVel.x + ang.y*rVel.y);
+			if(dot<0){dot=0;}
+			velocity+=-2*ang*dot;
+			if(dot>4){
+				ani.SetBool("Springing",true);
+			}
+		}
+		else if (nearPoint.y>nearPoint.x){
 			if((collision.transform.position.y-transform.position.y) * (velocity.y)>0){
 				if (velocity.y>0 && max>transform.position.y-0.03f){
 					max = transform.position.y-0.03f;
@@ -69,7 +85,13 @@ public class SideMove : MonoBehaviour
 				velocity = new Vector3(0,0,0);
 			}
 		}else{
-			notStuck = notStuck && ((collision.transform.position.x - transform.position.x) * Globals.playervel.x >0);
+			notStuck = notStuck && ((collision.transform.position.x - transform.position.x) * Globals.playervel.x <0);
+			velocity.x=0;
+		}
+	}
+	void OnCollisionEnter2D(Collision2D col){
+		if(col.gameObject.tag=="Player"){
+			velocity=new Vector3(0,0,0);
 		}
 	}
 }

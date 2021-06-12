@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Move : MonoBehaviour
 {
-	float max_spd=2;
-	float res=4F;
+	float max_spd=4;
+	public float end=8;
+	float res=8F;
     // Start is called before the first frame update
     void Start()
     {
+		Globals.end=end;
 		Globals.playervel = new Vector3(0,0,0); 
     }
 

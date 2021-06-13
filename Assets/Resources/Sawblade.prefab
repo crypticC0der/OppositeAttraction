@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 521968453799675820}
   - component: {fileID: 521968453799675823}
   - component: {fileID: 521968453799675822}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: blade
   m_TagString: DangerAll
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 8863798883585708316}
   - component: {fileID: 521968455602470652}
   - component: {fileID: 521968455602470655}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sawblade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,3 +217,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec4154becfe1af0efba68357017a6598, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rot: 900

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8960417951864158683}
   - component: {fileID: 8960417951864158682}
   - component: {fileID: 2686966233243531946}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DoubleSpike
   m_TagString: DangerVert
   m_Icon: {fileID: 0}

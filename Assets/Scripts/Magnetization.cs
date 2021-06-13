@@ -7,7 +7,7 @@ public class Magnetization : MonoBehaviour
 	public GameObject line;
 	Vector3 velocity;
 	Vector3 acc;
-	int direction =1;
+	public int direction =1;
 	public float force=20;
 	List<SpriteRenderer> renders;
 	List<Transform> transRights;
@@ -44,8 +44,9 @@ public class Magnetization : MonoBehaviour
 				transform.eulerAngles=new Vector3(0,0,180.1f);
 			}
 		}
-
-
+	}
+	
+	void FixedUpdate(){
 		List<RaycastHit2D> results = new List<RaycastHit2D>();
 		ContactFilter2D filt = new ContactFilter2D();
 		LayerMask lm = LayerMask.GetMask("magnetizable");
@@ -72,7 +73,7 @@ public class Magnetization : MonoBehaviour
 
 			//line management
 			Vector3 linePos = (transform.position+results[i].transform.position)/2;
-			linePos.z=0;
+			linePos.z=0.5f;
 			transRights[i].position=linePos;
 			Vector3 dislocation = transform.position - results[i].transform.position;
 			float dist = Globals.VecToFloat(dislocation);

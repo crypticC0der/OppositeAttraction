@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpikeSpin : MonoBehaviour
 {
     // Start is called before the first frame update
+	public float rot=900;
 	Transform child;
     void Start()
     {
@@ -14,6 +15,6 @@ public class SpikeSpin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		child.transform.localEulerAngles += new Vector3(0,0,900)*Time.deltaTime;
+		child.transform.localEulerAngles += new Vector3(0,0,rot)*Time.deltaTime;
     }
 }

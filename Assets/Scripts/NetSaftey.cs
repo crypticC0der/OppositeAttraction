@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NetSaftey : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class NetSaftey : MonoBehaviour
 		if(won||ded){
 			timer-=Time.deltaTime;
 			if(timer<0 && won){
-				//next level
+				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
 				won=false;
 				GameObject.Destroy(gameObject);	
 			}else if(timer<0 &&ded){
@@ -40,28 +41,30 @@ public class NetSaftey : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D col){
 		Vector2 dots = Globals.GetDots(Mathf.PI*col.transform.eulerAngles.z/180,transform.position-col.transform.position);
-		switch(col.gameObject.tag){
-			case "DangerAll":
-				Die();
-				break;
-			case "DangerVert":
-				if ((dots.x>0 && dots.x>dots.y) || (dots.x<0 && -dots.x>dots.y)){
+		if (!ded && !won){
+			switch(col.gameObject.tag){
+				case "DangerAll":
 					Die();
-				}
-				break;
-			case "DangerUP":
-				if (dots.x>dots.y){
-					Die();
-				}
-				break;
-			case "Player":
-					Win();
-					GameObject.Destroy(col.gameObject);
-					Vector3 pos = transform.position;
-					pos.y=3.4f;
-					Globals.accelerations[gameObject]=new Vector3(0,0,0);
-					transform.position=pos;
 					break;
+				case "DangerVert":
+					if ((dots.x>0 && dots.x>dots.y) || (dots.x<0 && -dots.x>dots.y)){
+						Die();
+					}
+					break;
+				case "DangerUP":
+					if (dots.x>dots.y){
+						Die();
+					}
+					break;
+				case "Player":
+						Win();
+						GameObject.Destroy(col.gameObject);
+						Vector3 pos = transform.position;
+						pos.y=3.4f;
+						Globals.accelerations[gameObject]=new Vector3(0,0,0);
+						transform.position=pos;
+						break;
+			}
 		}
 	}
 }

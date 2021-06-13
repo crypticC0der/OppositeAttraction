@@ -7,13 +7,11 @@ public class SideMove : MonoBehaviour
     // Start is called before the first frame update
 	Vector3 velocity;
 	const float max_spd=16;
-	bool lframe=false;
 	bool notStuck=true;
 	public bool copycat=false;
 	public float mass=0;
 	public float pole=1;
-	float min=-4.45f;
-	float max=2.32f;
+	bool magnetized=false;
     void Start()
     {
 		velocity = new Vector3(0,0,0);
@@ -21,38 +19,43 @@ public class SideMove : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-		if (Input.GetKeyDown("space")){
-			min=-Mathf.Infinity;
-			max=Mathf.Infinity;
-		}
-		
+	void FixedUpdate(){
 		if(velocity.x>0){velocity.x-=8*Time.deltaTime;}
+		magnetized=Globals.accelerations[gameObject].y!=0;
 		if(velocity.x<0){velocity.x+=8*Time.deltaTime;}
 		if(velocity.x<0.1 &&velocity.x>-0.1){velocity.x=0;}
 		Vector3 acc = new Vector3(0,Globals.res,0); 
 		if (velocity.y>0){acc.y*=-1;}
-		if (velocity.y<1&&velocity.y>-1 && (Globals.accelerations[gameObject].y!=0 || (velocity.y<0.1 && velocity.y>-0.1))){acc*=0;}
-		if (notStuck && copycat && Globals.accelerations[gameObject].y!=0){
-			transform.position+=Globals.playervel*Time.deltaTime;
-		}
+		if (velocity.y<1&&velocity.y>-1 && (magnetized || (velocity.y<0.1 && velocity.y>-0.1))){acc*=0;}
 		acc += pole * Globals.accelerations[gameObject]/mass;
 		velocity+=acc*Time.deltaTime;
-		
 		if(velocity.y>max_spd){velocity.y=max_spd;}
 		else if(velocity.y<-max_spd){velocity.y =-max_spd;}
-		bool frame = (velocity.y<-.01f || velocity.y>.01f) && (transform.position.x > Globals.end  || !(velocity.y>0 && transform.position.y>max)) && !(velocity.y<0 && transform.position.y<min);
+		Globals.accelerations[gameObject]=new Vector3(0,0,0);
+	}
+
+
+    void Update()
+    {
+		if (notStuck && copycat && magnetized){
+			transform.position+=Globals.playervel*Time.deltaTime;
+		}
+		
+		bool frame = (velocity.y<-.01f || velocity.y>.01f);
 		
 		//if you start flying through walls use this instead, and have maxes as the inital values not the infinities when space is pressed
 		//bool frame = (velocity.y<-.01f || velocity.y>.01f) && (transform.position.x>8 || !(velocity.y>0 && transform.position.y>max)) && !(velocity.y<0 && transform.position.y<min);
 		if (frame || velocity.x!=0){
 			transform.position+=velocity*Time.deltaTime;
 		}
-		Globals.accelerations[gameObject]=new Vector3(0,0,0);
-		lframe =frame;
 		notStuck=true;
     }
+	void OnCollisionExit2D(Collision2D col){
+		if(col.gameObject.tag=="conveyer"){
+			velocity=new Vector3(0,0,0);
+		}
+	}
+
 	void OnCollisionStay2D(Collision2D collision){
 		Vector2 vecpos = new Vector2(transform.position.x,transform.position.y);
 		Vector2 nearPoint = collision.collider.ClosestPoint(vecpos);
@@ -75,13 +78,13 @@ public class SideMove : MonoBehaviour
 				ani.SetBool("Springing",true);
 			}
 		}
+		else if (collision.gameObject.tag=="conveyer"){
+			float angle=collision.transform.eulerAngles.z*Mathf.PI/180;
+			Vector3 ang = new Vector3(Mathf.Cos(angle),Mathf.Sin(angle),0);
+			velocity=ang*2;
+		}
 		else if (nearPoint.y>nearPoint.x){
 			if((collision.transform.position.y-transform.position.y) * (velocity.y)>0){
-				if (velocity.y>0 && max>transform.position.y-0.03f){
-					max = transform.position.y-0.03f;
-				}else if (velocity.y<0 && min<transform.position.y+0.03f){
-					min = transform.position.y +0.03f;
-				}
 				velocity = new Vector3(0,0,0);
 			}
 		}else{

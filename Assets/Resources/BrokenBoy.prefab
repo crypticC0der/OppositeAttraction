@@ -813,6 +813,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7884076600823923412}
+  - component: {fileID: -9052346819293736748}
   m_Layer: 0
   m_Name: BrokenBoy
   m_TagString: Untagged
@@ -842,6 +843,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-9052346819293736748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7193724403516309071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be4340f8ad0698238ce19d0f69bfd89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7703067710249259724
 GameObject:
   m_ObjectHideFlags: 0

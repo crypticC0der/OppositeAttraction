@@ -8,6 +8,8 @@ TagManager:
   - DangerUP
   - DangerVert
   - DangerAll
+  - Spring
+  - conveyer
   layers:
   - Default
   - TransparentFX

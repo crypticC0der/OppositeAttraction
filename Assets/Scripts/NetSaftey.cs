@@ -14,6 +14,7 @@ public class NetSaftey : MonoBehaviour
 		Animator anim =gameObject.GetComponent<Animator>();
 		ded=true;
 		anim.SetBool("dying",true);
+		AudioSource.PlayClipAtPoint(Resources.Load("Magnet_break") as AudioClip,transform.position);
 	}
 
 	void Win(){
@@ -21,6 +22,7 @@ public class NetSaftey : MonoBehaviour
 		timer=0.7f;
 		Animator anim =gameObject.GetComponent<Animator>();
 		anim.SetBool("winning",true);
+		AudioSource.PlayClipAtPoint(Resources.Load("Winner") as AudioClip,transform.position);
 	}
 
 	void LateUpdate(){

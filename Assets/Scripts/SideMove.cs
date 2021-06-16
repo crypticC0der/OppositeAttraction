@@ -21,7 +21,13 @@ public class SideMove : MonoBehaviour
     // Update is called once per frame
 	void FixedUpdate(){
 		if(velocity.x>0){velocity.x-=8*Time.deltaTime;}
+		bool lmag = magnetized;
 		magnetized=Globals.accelerations[gameObject].y!=0;
+		if(magnetized && !lmag && copycat){
+			Vector3 p =transform.position;
+			p.x = (transform.position.x+Globals.mag.transform.position.x)/2;
+			transform.position=p;
+		}
 		if(velocity.x<0){velocity.x+=8*Time.deltaTime;}
 		if(velocity.x<0.1 &&velocity.x>-0.1){velocity.x=0;}
 		Vector3 acc = new Vector3(0,Globals.res,0); 
@@ -73,9 +79,10 @@ public class SideMove : MonoBehaviour
 			}
 			float dot = 1*(ang.x*rVel.x + ang.y*rVel.y);
 			if(dot<0){dot=0;}
-			velocity+=-2*ang*dot;
+			velocity+=-(ang)*(dot*2);
 			if(dot>4){
 				ani.SetBool("Springing",true);
+				AudioSource.PlayClipAtPoint(Resources.Load("boing") as AudioClip,transform.position);
 			}
 		}
 		else if (collision.gameObject.tag=="conveyer"){
@@ -85,6 +92,9 @@ public class SideMove : MonoBehaviour
 		}
 		else if (nearPoint.y>nearPoint.x){
 			if((collision.transform.position.y-transform.position.y) * (velocity.y)>0){
+				if (velocity.y>5 ||  velocity.y<-5){
+					AudioSource.PlayClipAtPoint(Resources.Load("Magnets_stick") as AudioClip,transform.position);
+				}
 				velocity = new Vector3(0,0,0);
 			}
 		}else{

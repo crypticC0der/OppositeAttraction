@@ -10,19 +10,27 @@ public class CamMove : MonoBehaviour
 	public Vector2 minbounds;
 	public Transform net;
 
+
 	void Update(){
 		if(Input.GetKeyDown(KeyCode.Escape)){
 			transform.GetChild(1).gameObject.SetActive(true);
 			transform.GetChild(2).gameObject.SetActive(true);
+			transform.GetChild(3).gameObject.SetActive(true);
 			Time.timeScale=0;
-		}
-		if(Input.GetKeyDown(KeyCode.Return)){
-			Time.timeScale=1;
-			transform.GetChild(1).gameObject.SetActive(false);
-			transform.GetChild(2).gameObject.SetActive(false);
 		}
 	}
     // Update is called once per frame
+	public void ResetTime(){
+		Time.timeScale=1;
+		transform.GetChild(1).gameObject.SetActive(false);
+		transform.GetChild(2).gameObject.SetActive(false);
+		transform.GetChild(3).gameObject.SetActive(false);
+	}
+
+	public void Die(){
+		Application.Quit();
+	}
+
     void LateUpdate()
     {
         Vector3 pos = net.position;
